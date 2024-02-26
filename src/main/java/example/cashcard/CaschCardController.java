@@ -20,26 +20,14 @@ class CashCardController {
     @GetMapping("/{requestedId}")
     private ResponseEntity<CashCard> findById(@PathVariable Long requestedId) {
         // optional makes it there can be data or not, smart object
-        //Optional<CashCard> cashCardOptional = cashCardRepository.findById(requestedId);
+        Optional<CashCard> cashCardOptional = cashCardRepository.findById(requestedId);
 
-        if (requestedId.equals(99L)) {
-            CashCard cashCard = new CashCard(99L, 123.45);
-            return ResponseEntity.ok(cashCard);
+
+        // if there is data
+        if (cashCardOptional.isPresent()) {
+            return ResponseEntity.ok(cashCardOptional.get());
         } else {
             return ResponseEntity.notFound().build();
         }
-        // if there is data
-//        if (cashCardOptional.isPresent()) {
-//            return ResponseEntity.ok(cashCardOptional.get());
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-
-//        if (requestedId.equals(99L)) {
-//            CashCard cashCard = new CashCard(99L, 123.45);
-//            return ResponseEntity.ok(cashCard);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
     }
 }
