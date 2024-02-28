@@ -22,8 +22,9 @@ class SecurityConfig {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/cashcards/**")
-                        .authenticated())
+                        .hasRole("CARD-OWNER")) // enable RBAC: Replaced the .authenticated() call with the hasRole(...) call.
                 .httpBasic(Customizer.withDefaults())
+                //use CSRF protection for any request that could be processed by a browser by normal users. If you are only creating a service that is used by non-browser clients, you will likely want to disable CSRF protection.
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
@@ -34,9 +35,14 @@ class SecurityConfig {
         UserDetails neco = users
                 .username("neco1")
                 .password(passwordEncoder.encode("abc123"))
-                .roles() // No roles for now
+                .roles("CARD-OWNER") // new role
                 .build();
-        return new InMemoryUserDetailsManager(neco);
+        UserDetails hankOwnsNoCards = users
+                .username("hank-owns-no-cards")
+                .password(passwordEncoder.encode("qrs456"))
+                .roles("NON-OWNER") // new role
+                .build();
+        return new InMemoryUserDetailsManager(neco, hankOwnsNoCards);
     }
 
     @Bean
