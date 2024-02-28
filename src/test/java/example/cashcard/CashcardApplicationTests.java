@@ -14,11 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.annotation.DirtiesContext.*;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class CashCardApplicationTests {
     @Autowired
     TestRestTemplate restTemplate;
@@ -26,8 +23,8 @@ class CashCardApplicationTests {
     @Test
     void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response = restTemplate.getForEntity("/cashcards/99", String.class);
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
         DocumentContext documentContext = JsonPath.parse(response.getBody());
         Number id = documentContext.read("$.id");
         assertThat(id).isEqualTo(99);
@@ -47,7 +44,7 @@ class CashCardApplicationTests {
     @Test
     @DirtiesContext
     void shouldCreateANewCashCard() {
-        CashCard newCashCard = new CashCard(null, 250.00);
+        CashCard newCashCard = new CashCard(null, 250.00, "neco1");
         ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -55,7 +52,6 @@ class CashCardApplicationTests {
         ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCashCard, String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Add assertions such as these
         DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
         Number id = documentContext.read("$.id");
         Double amount = documentContext.read("$.amount");
@@ -77,7 +73,7 @@ class CashCardApplicationTests {
         assertThat(ids).containsExactlyInAnyOrder(99, 100, 101);
 
         JSONArray amounts = documentContext.read("$..amount");
-        assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.0, 150.00);
+        assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.00, 150.00);
     }
 
     @Test
