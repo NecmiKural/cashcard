@@ -74,10 +74,10 @@ class CashCardController {
             @PathVariable Long id,
             Principal principal
     ) {
-        if (!cashCardRepository.existsByIdAndOwner(id, principal.getName())) {
-            return ResponseEntity.notFound().build();
+        if (cashCardRepository.existsByIdAndOwner(id, principal.getName())) {
+            cashCardRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
         }
-        cashCardRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 }
