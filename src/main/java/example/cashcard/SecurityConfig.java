@@ -35,14 +35,19 @@ class SecurityConfig {
         UserDetails neco = users
                 .username("neco1")
                 .password(passwordEncoder.encode("abc123"))
-                .roles("CARD-OWNER") // new role
+                .roles("CARD-OWNER")
                 .build();
         UserDetails hankOwnsNoCards = users
                 .username("hank-owns-no-cards")
                 .password(passwordEncoder.encode("qrs456"))
-                .roles("NON-OWNER") // new role
+                .roles("NON-OWNER")
                 .build();
-        return new InMemoryUserDetailsManager(neco, hankOwnsNoCards);
+        UserDetails golgol = users
+                .username("golgol2")
+                .password(passwordEncoder.encode("xyz789"))
+                .roles("CARD-OWNER")
+                .build();
+        return new InMemoryUserDetailsManager(neco, hankOwnsNoCards, golgol);
     }
 
     @Bean
