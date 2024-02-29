@@ -56,4 +56,13 @@ class CashCardController {
                 .toUri();
         return ResponseEntity.created(locationOfNewCashCard).build();
     }
+
+    @PutMapping("/{requestedId}")
+    private ResponseEntity<Void> putCashCard(@PathVariable Long requestedId, @RequestBody CashCard cashCardUpdate, Principal principal) {
+        CashCard cashCard = cashCardRepository.findByIdAndOwner(requestedId, principal.getName());
+        CashCard updatedCashCard = new CashCard(cashCard.id(), cashCardUpdate.amount(), principal.getName());
+        cashCardRepository.save(updatedCashCard);
+        // just return 204 NO CONTENT for now.
+        return ResponseEntity.noContent().build();
+    }
 }
